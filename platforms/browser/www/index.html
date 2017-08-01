@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<!--
+   @DEV https://morettic.com.br
+   @Author Luis Augusto Machado Moretto
+   @Email malacma@gmail.com
+   @Year 2017
+-->
+<html>
+
+    <head>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: 'unsafe-eval';
+              style-src 'self' 'unsafe-inline'  https://*;
+              script-src 'self' http://* https://* 'unsafe-inline' 'unsafe-eval';
+              frame-src 'self' http://* 'unsafe-inline' 'unsafe-eval';
+              media-src *;
+              img-src https://* 'self' https://* data:;">
+
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+        <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+        <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
+
+        <title>Quizz</title>
+    </head>
+
+    <body>
+        <!-- Main Navigator -->
+    <ons-navigator swipeable id="myNavigator" page="home.html"></ons-navigator>
+    <!-- Main Page Template -->
+    <template id="home.html">
+        <ons-page id="home">
+            <ons-toolbar>
+                <div class="center">High School Test Practice</div>
+            </ons-toolbar>
+            <p></p>
+            <section style="padding: 8px;padding-top: 80px">
+                <p>
+                <ons-button modifier="large--cta" onclick="quizzUtils.startQuizz()">
+                    Start Test
+                </ons-button>
+                </p>
+                <p>
+                <ons-button modifier="large--cta" id="btContinue" onclick="quizzUtils.continueQuizz()">
+                    Continue
+                </ons-button>
+                </p>
+            </section>
+        </ons-page>
+    </template>
+    <!-- Quizz Page Template -->
+    <template id="quizz.html">
+        <ons-page id="quizz">
+            <ons-toolbar>
+                <div class="center">Quizz</div>
+            </ons-toolbar>
+
+            <ons-list>
+                <ons-list-header>
+                    <textarea class="textarea--transparent" rows="6" placeholder="Excerpt from Quizzzz" style="width: 98%;margin: 1px" readonly>
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                    </textarea>
+                    <br>
+
+                    Choose the right answer
+
+                </ons-list-header>
+                <ons-list-item tappable>
+                    <label class=" left ">
+                        <ons-radio name="optQuizz" input-id="radio-1"></ons-radio>
+                    </label>
+                    <label for="radio-1" class="center ">
+                        Option 1
+                    </label>
+                </ons-list-item>
+                <ons-list-item tappable>
+                    <label class=" left ">
+                        <ons-radio name="optQuizz" input-id="radio-2"></ons-radio>
+                    </label>
+                    <label for="radio-2" class="center ">
+                        Option 2
+                    </label>
+                </ons-list-item>
+                <ons-list-item tappable>
+                    <label class=" left ">
+                        <ons-radio name="optQuizz" input-id="radio-3"></ons-radio>
+                    </label>
+                    <label for="radio-3" class="center">
+                        Option 3
+                    </label>
+                </ons-list-item>
+                <ons-list-item tappable>
+                    <label class=" left ">
+                        <ons-radio name="optQuizz" input-id="radio-4"></ons-radio>
+                    </label>
+                    <label for="radio-4" class="center ">
+                        Option 4
+                    </label>
+                </ons-list-item>
+            </ons-list>
+            <ons-bottom-toolbar>
+                <ons-row>
+                    <ons-col width="25%">
+                        <ons-button id="btPause" class=" left " onclick="quizzUtils.pauseQuizz()">Pause</ons-button>
+                    </ons-col>
+                    <ons-col width="45%">
+                        <center>&nbsp;Question <br>1 of 20&nbsp;</center>
+                    </ons-col>
+                    <ons-col width="15%">
+                        <ons-button id="btBack" modifier="outline" onclick="quizzUtils.previousQuizz()"> << </ons-button>
+                    </ons-col>
+                    <ons-col width="15%">
+                        <ons-button id="btNext" modifier="outline" onclick="quizzUtils.nextQuizz()"> >> </ons-button>
+                    </ons-col>
+                </ons-row>
+            </ons-bottom-toolbar>
+        </ons-page>
+    </template>
+    <script type="text/javascript " src="cordova.js "></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script type="text/javascript" src="js/QuizzQuestions.js"></script>
+    <script type="text/javascript" src="js/QuizzUtils.js"></script>
+</body>
+
+</html>
