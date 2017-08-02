@@ -6,14 +6,13 @@
    @Year 2017
 -->
 <html>
-
     <head>
         <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://* data: 'unsafe-eval';
               style-src 'self' 'unsafe-inline'  https://*;
               script-src 'self' http://* https://* 'unsafe-inline' 'unsafe-eval';
               frame-src 'self' http://* 'unsafe-inline' 'unsafe-eval';
               media-src *;
-              img-src https://* 'self' https://* data:;">
+              img-src https://* 'self' http://* data:;">
 
         <meta name="format-detection" content="telephone=no">
         <meta name="msapplication-tap-highlight" content="no">
@@ -22,7 +21,6 @@
         <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
         <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
         <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
-
         <title>Quizz</title>
     </head>
 
@@ -38,7 +36,7 @@
             <p></p>
             <section style="padding: 8px;padding-top: 80px">
                 <p>
-                <ons-button modifier="large--cta" onclick="quizzUtils.startQuizz()">
+                <ons-button modifier="large--cta" onclick="quizzUtils.startQuizz(questions)">
                     Start Test
                 </ons-button>
                 </p>
@@ -59,9 +57,10 @@
 
             <ons-list>
                 <ons-list-header>
-                    <textarea class="textarea--transparent" rows="6" placeholder="Excerpt from Quizzzz" style="width: 98%;margin: 1px" readonly>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
-                    </textarea>
+                    <center><img width="0" height="0" id="imgQItem"/></center>
+                    <div id="txtExcerpt" class="textarea--transparent"  style="width: 98%;margin: 1px">
+                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+                    </div>
                     <br>
 
                     Choose the right answer
@@ -69,34 +68,34 @@
                 </ons-list-header>
                 <ons-list-item tappable>
                     <label class=" left ">
-                        <ons-radio name="optQuizz" input-id="radio-1"></ons-radio>
+                        <ons-radio name="optQuizz" input-id="radio-1" onclick="quizzUtils.choose(0)"></ons-radio>
                     </label>
-                    <label for="radio-1" class="center ">
-                        Option 1
+                    <label for="radio-1" class="center " >
+                        <div  id="txtOpt1" ></div>
                     </label>
                 </ons-list-item>
                 <ons-list-item tappable>
                     <label class=" left ">
-                        <ons-radio name="optQuizz" input-id="radio-2"></ons-radio>
+                        <ons-radio name="optQuizz" input-id="radio-2" onclick="quizzUtils.choose(1)"></ons-radio>
                     </label>
                     <label for="radio-2" class="center ">
-                        Option 2
+                        <div  id="txtOpt2" ></div>
                     </label>
                 </ons-list-item>
                 <ons-list-item tappable>
                     <label class=" left ">
-                        <ons-radio name="optQuizz" input-id="radio-3"></ons-radio>
+                        <ons-radio name="optQuizz" input-id="radio-3" onclick="quizzUtils.choose(2)"></ons-radio>
                     </label>
                     <label for="radio-3" class="center">
-                        Option 3
+                        <div  id="txtOpt3" ></div>
                     </label>
                 </ons-list-item>
                 <ons-list-item tappable>
                     <label class=" left ">
-                        <ons-radio name="optQuizz" input-id="radio-4"></ons-radio>
+                        <ons-radio name="optQuizz" input-id="radio-4" onclick="quizzUtils.choose(3)"></ons-radio>
                     </label>
                     <label for="radio-4" class="center ">
-                        Option 4
+                        <div  id="txtOpt4" ></div>
                     </label>
                 </ons-list-item>
             </ons-list>
@@ -106,7 +105,7 @@
                         <ons-button id="btPause" class=" left " onclick="quizzUtils.pauseQuizz()">Pause</ons-button>
                     </ons-col>
                     <ons-col width="45%">
-                        <center>&nbsp;Question <br>1 of 20&nbsp;</center>
+                        <center>&nbsp;Question <br><div  id="txtCounter" ></div></center>
                     </ons-col>
                     <ons-col width="15%">
                         <ons-button id="btBack" modifier="outline" onclick="quizzUtils.previousQuizz()"> << </ons-button>
@@ -123,5 +122,4 @@
     <script type="text/javascript" src="js/QuizzQuestions.js"></script>
     <script type="text/javascript" src="js/QuizzUtils.js"></script>
 </body>
-
 </html>

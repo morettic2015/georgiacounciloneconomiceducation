@@ -12,6 +12,9 @@
         },
         "cordova-plugin-splashscreen": {
             "PACKAGE_NAME": "br.com.morettic.quizz"
+        },
+        "cordova-plugin-google-analytics": {
+            "PACKAGE_NAME": "br.com.morettic.quizz"
         }
     },
     "dependent_plugins": {}
