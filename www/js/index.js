@@ -17,9 +17,8 @@ ons.ready(function() {
     quizzUtils.initQuizzStats();
     //Init google Analytics
     //Need to change key
-    analytics = navigator.analytics;
-// set the tracking id
-    window.ga.startTrackerWithId('UA-57197864-6', 30)
+    //set the tracking id
+    window.ga.startTrackerWithId('UA-57197864-6', 30);
 });
 
 
