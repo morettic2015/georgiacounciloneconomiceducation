@@ -17,9 +17,21 @@ ons.ready(function() {
     quizzUtils.initQuizzStats();
     //Init google Analytics
     //Need to change key
-    analytics = navigator.analytics;
-// set the tracking id
-    window.ga.startTrackerWithId('UA-57197864-6', 30)
+    //set the tracking id
+    window.ga.startTrackerWithId('UA-57197864-6', 30);
 });
+
+/**
+ *  @ Todo Animate it.
+ * */
+
+var showPopover = function(target) {
+    var component = document.getElementById('btNext');
+    document.getElementById('popover').show(component);
+};
+
+var hidePopover = function() {
+    document.getElementById('popover').hide();
+};
 
 

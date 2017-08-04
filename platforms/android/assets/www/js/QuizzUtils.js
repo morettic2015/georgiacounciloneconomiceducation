@@ -27,6 +27,10 @@ var QuizzUtils = function() {
             if (page.matches('#quizz')) {
                 ons.notification.alert('Lets Start!');
                 quizzUtils.showQuizzUI();
+
+                $("#btBack").css("background-color", "#deb406");
+                $("#btNext").css("background-color", "#deb406")
+
             } else {//Init States
                 quizzUtils = new QuizzUtils();
                 //quizzUtils.initQuizzStats();
@@ -46,7 +50,31 @@ var QuizzUtils = function() {
             document.getElementById('imgQItem').src = '#';
             document.getElementById('imgQItem').style.visibility = 'hidden';
         }
-
+        var groupQz = null;
+        var headerColor = "";
+        switch (this.qI.group) {
+            case 1:
+                groupQz = "Fundamentals";
+                headerColor = "#2d3092";
+                break;
+            case 2:
+                groupQz = "Microeconomics";
+                headerColor = "#2d3092";
+                break;
+            case 3:
+                groupQz = "Macroeconomics";
+                headerColor = "#2d3092";
+                break;
+            case 4:
+                groupQz = "International";
+                headerColor = "#2d3092";
+                break;
+            case 5:
+                groupQz = "Personal Finance";
+                headerColor = "#2d3092";
+                break;
+        }
+        $("#txtQuizzType").text(groupQz);
         $("#txtExcerpt").text(this.qI.excerpt);
         $("#txtOpt1").text(this.qI.answers[0].opt);
         $("#txtOpt2").text(this.qI.answers[1].opt);
@@ -67,15 +95,15 @@ var QuizzUtils = function() {
      * Start Quizz
      * */
     this.startQuizz = function(questions) {
-//Init Start Quizz Button
+        //Init Start Quizz Button
 
         this.qz = new Quizze();
         //Show on UI
         //setTimeout(this.showQuizzUI(), 3000);
-        var isRetake = localStorage.getItem("completed");
-        var action = isRetake ? "quiz retaken" : "quiz started";
+
         var myLastAnswers = localStorage.getItem("answers");
         var myLastQuestions = localStorage.getItem("questions");
+        //Has LocalStorage older question??
         if (myLastAnswers !== undefined && myLastAnswers !== null) {
             myLastAnswers = JSON.parse(myLastAnswers);
             myLastQuestions = JSON.parse(myLastQuestions);
@@ -84,12 +112,16 @@ var QuizzUtils = function() {
             this.qI = this.qz.nextQuizz(0);
             this.qz.currentPosition = this.qz.answers.length;
         } else {
+            this.qz.currentPosition = 0;
             this.qz.createQuizze(questions);
             this.qz.fillQuizze();
             //First one
             this.qI = this.qz.nextQuizz(0);
         }
-//track quiz started event
+
+        //track quiz started event
+        var isRetake = localStorage.getItem("completed");
+        var action = isRetake ? "quiz retaken" : "quiz started";
         window.ga.trackEvent(action, action, action, 1);
         //Open QUiz page
         document.querySelector('#myNavigator').pushPage('quizz.html', {data: "none"});
@@ -242,8 +274,8 @@ var Quizze = function() {
     }
 
     this.beforeQuizz = function() {
-
-        return this.currentPosition > 0 ? this.lQuizzes[this.currentPosition--] : this.lQuizzes[0];
+        var mAnt = this.currentPosition - 1;
+        return mAnt > 0 ? this.lQuizzes[mAnt] : this.lQuizzes[0];
     }
     this.nextQuizz = function(answ) {
         this.calcScore(this.currentPosition - 1, answ);
@@ -289,10 +321,13 @@ var Quizze = function() {
                 this.score++; //
                 //@todo
                 //Animate
+                $("#statusMsg").html("Thats it! You got it");
             } else {
+                $("#statusMsg").html("Wrong answer!");
                 //Todo
                 //Animate
             }
+            showPopover($("#btNext"));
         } catch (e) {
             console.log(e);
         }

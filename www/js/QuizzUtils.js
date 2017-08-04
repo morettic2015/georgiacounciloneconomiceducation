@@ -3,6 +3,8 @@
  *  @author Luis Augusto Machado Moretto
  *  @copyright https://morettic.com.br
  * */
+var isReadOnly = false;
+
 var QuizzUtils = function() {
     this.qz = null;
     this.qI = null;
@@ -27,6 +29,10 @@ var QuizzUtils = function() {
             if (page.matches('#quizz')) {
                 ons.notification.alert('Lets Start!');
                 quizzUtils.showQuizzUI();
+
+                $("#btBack").css("background-color", "#deb406");
+                $("#btNext").css("background-color", "#deb406")
+
             } else {//Init States
                 quizzUtils = new QuizzUtils();
                 //quizzUtils.initQuizzStats();
@@ -46,17 +52,43 @@ var QuizzUtils = function() {
             document.getElementById('imgQItem').src = '#';
             document.getElementById('imgQItem').style.visibility = 'hidden';
         }
-
+        var groupQz = null;
+        var headerColor = "";
+        switch (this.qI.group) {
+            case 1:
+                groupQz = "Fundamentals";
+                headerColor = "#2d3092";
+                break;
+            case 2:
+                groupQz = "Microeconomics";
+                headerColor = "#2d3092";
+                break;
+            case 3:
+                groupQz = "Macroeconomics";
+                headerColor = "#2d3092";
+                break;
+            case 4:
+                groupQz = "International";
+                headerColor = "#2d3092";
+                break;
+            case 5:
+                groupQz = "Personal Finance";
+                headerColor = "#2d3092";
+                break;
+        }
+        $("#txtQuizzType").text(groupQz);
         $("#txtExcerpt").text(this.qI.excerpt);
         $("#txtOpt1").text(this.qI.answers[0].opt);
         $("#txtOpt2").text(this.qI.answers[1].opt);
         $("#txtOpt3").text(this.qI.answers[2].opt);
         $("#txtOpt4").text(this.qI.answers[3].opt);
         //Unckeck
-        document.getElementById("radio-1").checked = false;
-        document.getElementById("radio-2").checked = false;
-        document.getElementById("radio-3").checked = false;
-        document.getElementById("radio-4").checked = false;
+        if (!isReadOnly) {//havent answered question yet
+            document.getElementById("radio-1").checked = false;
+            document.getElementById("radio-2").checked = false;
+            document.getElementById("radio-3").checked = false;
+            document.getElementById("radio-4").checked = false;
+        }
         var pos = this.qz.currentPosition;
         var counterStats = pos + " of " + this.qz.quizzSize;
         $("#txtCounter").text(counterStats);
@@ -67,15 +99,15 @@ var QuizzUtils = function() {
      * Start Quizz
      * */
     this.startQuizz = function(questions) {
-//Init Start Quizz Button
+        //Init Start Quizz Button
 
         this.qz = new Quizze();
         //Show on UI
         //setTimeout(this.showQuizzUI(), 3000);
-        var isRetake = localStorage.getItem("completed");
-        var action = isRetake ? "quiz retaken" : "quiz started";
+
         var myLastAnswers = localStorage.getItem("answers");
         var myLastQuestions = localStorage.getItem("questions");
+        //Has LocalStorage older question??
         if (myLastAnswers !== undefined && myLastAnswers !== null) {
             myLastAnswers = JSON.parse(myLastAnswers);
             myLastQuestions = JSON.parse(myLastQuestions);
@@ -84,12 +116,16 @@ var QuizzUtils = function() {
             this.qI = this.qz.nextQuizz(0);
             this.qz.currentPosition = this.qz.answers.length;
         } else {
+            this.qz.currentPosition = 0;
             this.qz.createQuizze(questions);
             this.qz.fillQuizze();
-            //First one
-            this.qI = this.qz.nextQuizz(0);
+            //First one //set as undefined
+            this.qI = this.qz.nextQuizz(undefined);
         }
-//track quiz started event
+
+        //track quiz started event
+        var isRetake = localStorage.getItem("completed");
+        var action = isRetake ? "quiz retaken" : "quiz started";
         window.ga.trackEvent(action, action, action, 1);
         //Open QUiz page
         document.querySelector('#myNavigator').pushPage('quizz.html', {data: "none"});
@@ -120,8 +156,8 @@ var QuizzUtils = function() {
 
         this.qI = this.qz.beforeQuizz();
         this.showQuizzUI();
-        var pos = this.qz.currentPosition - 1;
-        pos = pos < 1 ? 0 : pos;
+        var pos = this.qz.currentPosition;
+        pos = pos > 0 ? pos - 1 : 0;
         var checkPos = this.qz.answers[pos];
         this.currentAnswer = checkPos;
         var radio12 = "";
@@ -135,7 +171,7 @@ var QuizzUtils = function() {
             case 2:
                 radio12 = "radio-3";
                 break;
-            case 2:
+            case 3:
                 radio12 = "radio-4";
                 break;
             default:
@@ -160,6 +196,7 @@ var QuizzUtils = function() {
 
         var a1 = this.qz.answers[this.qz.currentPosition];
         if (a1 !== undefined) {//Already been answered
+            isReadOnly = true;
             var pos = this.qz.currentPosition - 1;
             var checkPos = this.qz.answers[pos];
             this.currentAnswer = checkPos;
@@ -172,13 +209,13 @@ var QuizzUtils = function() {
                     radio12 = "radio-2";
                     break;
                 case 2:
-                    radio12 = "radio-2";
+                    radio12 = "radio-3";
                     break;
-                case 2:
-                    radio12 = "radio-2";
+                case 3:
+                    radio12 = "radio-4";
                     break;
                 default:
-                    radio12 = "radio-2";
+                    radio12 = null;
                     break;
             }
             try {
@@ -191,6 +228,7 @@ var QuizzUtils = function() {
                 console.log(e);
             }
         } else { //Not yet
+            isReadOnly = false;
             document.getElementById("radio-1").disabled = false;
             document.getElementById("radio-2").disabled = false;
             document.getElementById("radio-3").disabled = false;
@@ -242,26 +280,39 @@ var Quizze = function() {
     }
 
     this.beforeQuizz = function() {
+        this.currentPosition--;
 
-        return this.currentPosition > 0 ? this.lQuizzes[this.currentPosition--] : this.lQuizzes[0];
+        this.currentPosition = this.currentPosition >= 0 ? this.currentPosition : 0;
+
+        return this.currentPosition > 0 ? this.lQuizzes[this.currentPosition] : this.lQuizzes[0];
     }
     this.nextQuizz = function(answ) {
-        this.calcScore(this.currentPosition - 1, answ);
+        /**
+         *  @if question answer not undefined and current answer is undefined update set answer.
+         *  Can answer only one time
+         * */
+        if (this.answers[this.currentPosition] === undefined && answ !== undefined)
+            this.calcScore(this.currentPosition - 1, answ);
+
         if (this.currentPosition >= this.lQuizzes.length) {//FINISH
 
-//track quiz completed event
+            //track quiz completed event
             window.ga.trackEvent('quiz completed', 'quiz completed', 'quiz completed', 1);
             //High Score
             if (this.score >= 10) {
                 window.ga.trackEvent('perfect score', 'perfect score', 'perfect score', 1);
             }
-//Alert Score.
+
+            //Alert Score.
             ons.notification.alert('Your Score:' + this.score);
+
             //Save current state
             localStorage.setItem("completed", true);
+
             //Remove pause status
             localStorage.removeItem("answers");
             localStorage.removeItem("questions");
+
             // Reload original app url (ie your index.html file)
             if (confirm("Wish to finish Quizz??")) {
                 navigator.splashscreen.show();
@@ -277,7 +328,9 @@ var Quizze = function() {
             return this.lQuizzes[this.currentPosition++];
         }
     }
-
+    /**
+     *  @Calculate User Score
+     * */
     this.calcScore = function(pos, answer) {
         if (pos < 0) {//negative position
             return;
@@ -288,11 +341,12 @@ var Quizze = function() {
             if (questionItem.answers[parseInt(answer)].isFine) {
                 this.score++; //
                 //@todo
-                //Animate
+                $("#statusMsg").html("Thats it! You got it");
             } else {
+                $("#statusMsg").html("Wrong answer!");
                 //Todo
-                //Animate
             }
+            showPopover($("#btNext"));
         } catch (e) {
             console.log(e);
         }

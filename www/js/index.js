@@ -21,4 +21,17 @@ ons.ready(function() {
     window.ga.startTrackerWithId('UA-57197864-6', 30);
 });
 
+/**
+ *  @ Todo Animate it.
+ * */
+
+var showPopover = function(target) {
+    var component = document.getElementById('btNext');
+    document.getElementById('popover').show(component);
+};
+
+var hidePopover = function() {
+    document.getElementById('popover').hide();
+};
+
 
