@@ -25,8 +25,6 @@ var QuizzUtils = function() {
         //only continue if has previous session
         if (myLastAnswers === undefined) {
             document.getElementById('btContinue').style.display = "none";
-        } else {
-            document.getElementById('btStartQuizz').style.display = "none";
         }
         //Listener for Page load
         document.addEventListener('init', function(event) {
