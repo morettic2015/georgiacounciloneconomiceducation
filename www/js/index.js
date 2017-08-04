@@ -25,7 +25,7 @@ ons.ready(function() {
  *  @ Todo Animate it.
  * */
 
-var showPopover = function(target) {
+var showPopover = function() {
     var component = document.getElementById('btNext');
     document.getElementById('popover').show(component);
 };

@@ -23,8 +23,10 @@ var QuizzUtils = function() {
     this.initQuizzStats = function() {
         var myLastAnswers = localStorage.getItem("answers");
         //only continue if has previous session
-        if (myLastAnswers == undefined) {
+        if (myLastAnswers === undefined) {
             document.getElementById('btContinue').style.display = "none";
+        } else {
+            document.getElementById('btStartQuizz').style.display = "none";
         }
         //Listener for Page load
         document.addEventListener('init', function(event) {
@@ -47,7 +49,7 @@ var QuizzUtils = function() {
      *  @Display Behavior
      * */
     this.showQuizzUI = function() {
-        if (this.qI.img != null) {
+        if (this.qI.img !== null) {
             document.getElementById('imgQItem').src = this.qI.img;
             document.getElementById('imgQItem').style.visibility = 'visible';
             document.getElementById('imgQItem').style.width = '240px';
@@ -175,17 +177,10 @@ var QuizzUtils = function() {
         document.querySelector('#myNavigator').pushPage('quizz.html', {data: {title: 'Continue Quizz'}});
     }
     /**
-     * @Previous navigation Quizz
+     * @CheckRadio
      * */
-    this.previousQuizz = function() {
-
-        this.qI = this.qz.beforeQuizz();
-        this.showQuizzUI();
-        var pos = this.qz.currentPosition;
-        pos = pos > 0 ? pos - 1 : 0;
-        var checkPos = this.qz.answers[pos];
-        this.currentAnswer = checkPos;
-        var radio12 = "";
+    this.checkRadio = function(checkPos) {
+        var radio12 = null;
         switch (checkPos) {
             case 0:
                 radio12 = "radio-1";
@@ -203,6 +198,22 @@ var QuizzUtils = function() {
                 radio12 = null;
                 break;
         }
+        return radio12;
+    }
+
+    /**
+     * @Previous navigation Quizz
+     * */
+    this.previousQuizz = function() {
+
+        this.qI = this.qz.beforeQuizz();
+        this.showQuizzUI();
+        var pos = this.qz.currentPosition;
+        pos = pos > 0 ? pos - 1 : 0;
+        var checkPos = this.qz.answers[pos];
+        this.currentAnswer = checkPos;
+        var radio12 = this.checkRadio(checkPos);
+
         try {
             document.getElementById(radio12).checked = true;
         } catch (e) {
@@ -225,24 +236,7 @@ var QuizzUtils = function() {
             var pos = this.qz.currentPosition - 1;
             var checkPos = this.qz.answers[pos];
             this.currentAnswer = checkPos;
-            var radio12 = "";
-            switch (checkPos) {
-                case 0:
-                    radio12 = "radio-1";
-                    break;
-                case 1:
-                    radio12 = "radio-2";
-                    break;
-                case 2:
-                    radio12 = "radio-3";
-                    break;
-                case 3:
-                    radio12 = "radio-4";
-                    break;
-                default:
-                    radio12 = null;
-                    break;
-            }
+            var radio12 = this.checkRadio(checkPos);
             try {
                 document.getElementById(radio12).checked = true;
                 document.getElementById("radio-1").disabled = true;
@@ -276,23 +270,39 @@ var QuizzUtils = function() {
 var Quizze = function() {
     this.answers = new Array();
     this.score = 0;
-    this.quizzSize = 10;
+    this.qTT = [0, 0, 0, 0, 0];
+    this.qTP = [1, 2, 3, 4, 5];
+    this.quizzSize = 50;
     this.lQuizzes = new Array();
     this.rightAnswer = -1;
     this.currentPosition = 0;
     this.lPosRandom = new Array();
     this.fullQuizzes = questions; //Json File with Quizz questions
-
+    this.IR = 0;
+    this.gSize = 10;
     this.createQuizze = function(questions) {
         this.fullQuizzes = questions; //Json File with Quizz questions
     }
 //}
-//Get vector of 10 questions to start quizz
+//Get vector of 50 questions to start quizz
     this.getRandomPos = function(list) {
+        var tp = this.qTT[this.IR];
         var posTmp = Math.floor((Math.random() * list.length));
         if (this.lPosRandom[posTmp] === undefined) {//Dont have que Quizz item sorted on list
-            this.lQuizzes.push(this.fullQuizzes[posTmp]);
-            this.lPosRandom[posTmp] = -1; //set pos as existing one to mark as a flag
+
+            qz1 = this.fullQuizzes[posTmp];//get current sorted
+            if (qz1.group === this.qTP[this.IR]) {//belongs to the current group?
+                if (tp < this.gSize) {//
+                    this.qTT[this.IR]++;
+                    this.lQuizzes.push(qz1);
+                    this.lPosRandom[posTmp] = -1; //set pos as existing one to mark as a flag
+                } else {
+                    this.IR++;
+                    this.getRandomPos(list);
+                }
+            } else {
+                this.getRandomPos(list);
+            }
         } else {
             this.getRandomPos(list); //recursive;
         }
@@ -366,16 +376,27 @@ var Quizze = function() {
         this.answers[pos] = answer;
         try {
             if (questionItem.answers[parseInt(answer)].isFine) {
-                this.score++; //
+                //this.score++; //
                 //@todo
                 $("#statusMsg").html("Thats it! You got it");
             } else {
                 $("#statusMsg").html("Wrong answer!");
                 //Todo
             }
-            showPopover($("#btNext"));
+            showPopover();
         } catch (e) {
             console.log(e);
+        } finally {
+            this.score = 0;//Set score 0
+            var total = this.answers.length;//For each answer verify is fine or not
+            for (i = 0; i < total; i++) {
+                var pAnswer = this.answers[i];
+                if (this.lQuizzes[i].answers[pAnswer].isFine) {
+                    this.score++;
+                } else {
+                    console.log("Errrorr");
+                }
+            }
         }
     }
 }
