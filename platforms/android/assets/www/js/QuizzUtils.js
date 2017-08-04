@@ -19,7 +19,11 @@ var QuizzUtils = function() {
     }
 
     this.initQuizzStats = function() {
-        document.getElementById('btContinue').style.display = "none";
+        var myLastAnswers = localStorage.getItem("answers");
+        //only continue if has previous session
+        if (myLastAnswers == undefined) {
+            document.getElementById('btContinue').style.display = "none";
+        }
         //Listener for Page load
         document.addEventListener('init', function(event) {
             //alert(event);

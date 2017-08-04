@@ -21,7 +21,11 @@ var QuizzUtils = function() {
     }
 
     this.initQuizzStats = function() {
-        document.getElementById('btContinue').style.display = "none";
+        var myLastAnswers = localStorage.getItem("answers");
+        //only continue if has previous session
+        if (myLastAnswers == undefined) {
+            document.getElementById('btContinue').style.display = "none";
+        }
         //Listener for Page load
         document.addEventListener('init', function(event) {
             //alert(event);
@@ -147,6 +151,27 @@ var QuizzUtils = function() {
      * @Continue Quizz
      * */
     this.continueQuizz = function() {
+        this.qz = new Quizze();
+        //Show on UI
+        //setTimeout(this.showQuizzUI(), 3000);
+
+        //get from localstorage
+        var myLastAnswers = localStorage.getItem("answers");
+        var myLastQuestions = localStorage.getItem("questions");
+
+        //Parse continued questions
+        myLastAnswers = JSON.parse(myLastAnswers);
+        myLastQuestions = JSON.parse(myLastQuestions);
+
+        //init local objects
+        this.qz.lQuizzes = myLastQuestions;
+        this.qz.answers = myLastAnswers;
+        this.qI = this.qz.nextQuizz(this.qz.answers[myLastAnswers.length - 1]);
+        this.qz.currentPosition = this.qz.answers.length - 1;
+
+        //track quiz continue event
+        var action = "quiz continue";
+        window.ga.trackEvent(action, action, action, 1);
         document.querySelector('#myNavigator').pushPage('quizz.html', {data: {title: 'Continue Quizz'}});
     }
     /**
@@ -316,8 +341,10 @@ var Quizze = function() {
             // Reload original app url (ie your index.html file)
             if (confirm("Wish to finish Quizz??")) {
                 navigator.splashscreen.show();
-                window.location.href = 'index.html';
-                setTimeout(navigator.splashscreen.hide(), 5000);
+                setTimeout(function() {
+                    navigator.splashscreen.hide();
+                    window.location.href = 'index.html';
+                }, 3000);
             } else {
                 //return objeto
 

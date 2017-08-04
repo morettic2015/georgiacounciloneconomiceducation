@@ -21,7 +21,11 @@ var QuizzUtils = function() {
     }
 
     this.initQuizzStats = function() {
-        document.getElementById('btContinue').style.display = "none";
+        var myLastAnswers = localStorage.getItem("answers");
+        //only continue if has previous session
+        if (myLastAnswers == undefined) {
+            document.getElementById('btContinue').style.display = "none";
+        }
         //Listener for Page load
         document.addEventListener('init', function(event) {
             //alert(event);
@@ -147,6 +151,27 @@ var QuizzUtils = function() {
      * @Continue Quizz
      * */
     this.continueQuizz = function() {
+        this.qz = new Quizze();
+        //Show on UI
+        //setTimeout(this.showQuizzUI(), 3000);
+
+        //get from localstorage
+        var myLastAnswers = localStorage.getItem("answers");
+        var myLastQuestions = localStorage.getItem("questions");
+
+        //Parse continued questions
+        myLastAnswers = JSON.parse(myLastAnswers);
+        myLastQuestions = JSON.parse(myLastQuestions);
+
+        //init local objects
+        this.qz.lQuizzes = myLastQuestions;
+        this.qz.answers = myLastAnswers;
+        this.qI = this.qz.nextQuizz(this.qz.answers[myLastAnswers.length - 1]);
+        this.qz.currentPosition = this.qz.answers.length - 1;
+
+        //track quiz continue event
+        var action = "quiz continue";
+        window.ga.trackEvent(action, action, action, 1);
         document.querySelector('#myNavigator').pushPage('quizz.html', {data: {title: 'Continue Quizz'}});
     }
     /**
@@ -287,29 +312,39 @@ var Quizze = function() {
         return this.currentPosition > 0 ? this.lQuizzes[this.currentPosition] : this.lQuizzes[0];
     }
     this.nextQuizz = function(answ) {
+        /**
+         *  @if question answer not undefined and current answer is undefined update set answer.
+         *  Can answer only one time
+         * */
         if (this.answers[this.currentPosition] === undefined && answ !== undefined)
             this.calcScore(this.currentPosition - 1, answ);
 
         if (this.currentPosition >= this.lQuizzes.length) {//FINISH
 
-//track quiz completed event
+            //track quiz completed event
             window.ga.trackEvent('quiz completed', 'quiz completed', 'quiz completed', 1);
             //High Score
             if (this.score >= 10) {
                 window.ga.trackEvent('perfect score', 'perfect score', 'perfect score', 1);
             }
-//Alert Score.
+
+            //Alert Score.
             ons.notification.alert('Your Score:' + this.score);
+
             //Save current state
             localStorage.setItem("completed", true);
+
             //Remove pause status
             localStorage.removeItem("answers");
             localStorage.removeItem("questions");
+
             // Reload original app url (ie your index.html file)
             if (confirm("Wish to finish Quizz??")) {
                 navigator.splashscreen.show();
-                window.location.href = 'index.html';
-                setTimeout(navigator.splashscreen.hide(), 5000);
+                setTimeout(function() {
+                    navigator.splashscreen.hide();
+                    window.location.href = 'index.html';
+                }, 3000);
             } else {
                 //return objeto
 
@@ -320,7 +355,9 @@ var Quizze = function() {
             return this.lQuizzes[this.currentPosition++];
         }
     }
-
+    /**
+     *  @Calculate User Score
+     * */
     this.calcScore = function(pos, answer) {
         if (pos < 0) {//negative position
             return;
@@ -331,12 +368,10 @@ var Quizze = function() {
             if (questionItem.answers[parseInt(answer)].isFine) {
                 this.score++; //
                 //@todo
-                //Animate
                 $("#statusMsg").html("Thats it! You got it");
             } else {
                 $("#statusMsg").html("Wrong answer!");
                 //Todo
-                //Animate
             }
             showPopover($("#btNext"));
         } catch (e) {
