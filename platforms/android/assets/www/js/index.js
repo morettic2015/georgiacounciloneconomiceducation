@@ -21,16 +21,23 @@ ons.ready(function() {
     window.ga.startTrackerWithId('UA-57197864-6', 30);
 });
 
-var showPopover = function(target) {
-    document
-            .getElementById('popover')
-            .show(document.getElementById('btNext'));
+/**
+ *  @ Todo Animate it.
+ * */
+var showModal = function(mdl) {
+    document.getElementById(mdl).show();
+};
+var hideModal = function(mdl) {
+    document.getElementById(mdl).hide();
+};
+
+var showPopover = function() {
+    var component = document.getElementById('btNext');
+    document.getElementById('popover').show(component);
 };
 
 var hidePopover = function() {
-    document
-            .getElementById('popover')
-            .hide();
+    document.getElementById('popover').hide();
 };
 
 

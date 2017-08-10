@@ -24,6 +24,12 @@ ons.ready(function() {
 /**
  *  @ Todo Animate it.
  * */
+var showModal = function(mdl) {
+    document.getElementById(mdl).show();
+};
+var hideModal = function(mdl) {
+    document.getElementById(mdl).hide();
+};
 
 var showPopover = function() {
     var component = document.getElementById('btNext');

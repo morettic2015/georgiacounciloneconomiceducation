@@ -50,7 +50,45 @@
     </template>
     <!-- Quizz Page Template -->
     <template id="quizz.html">
+
         <ons-page id="quizz">
+
+            <ons-modal id="modal">
+                <ons-icon icon="ion-navicon"></ons-icon>
+                <h1>Choose a topic.</h1>
+                <br>
+                <ons-button id="btFundamentals" style="background-color: #deb40;margin-top: 8px" modifier="large--cta" class="center" onclick="quizzUtils.navigate(0)">Fundamentals</ons-button>
+                <br>
+
+                <ons-button id="btMicroeconomics" style="background-color: #deb40;margin-top: 8px" modifier="large--cta" class="center" onclick="quizzUtils.navigate(10)"> Microeconomics </ons-button>
+
+                <br>
+                <ons-button id="btMacroeconomics" style="background-color: #deb40;margin-top: 8px"  modifier="large--cta"  class="center" onclick="quizzUtils.navigate(20)"> Macroeconomics </ons-button>
+
+                <br>
+                <ons-button id="btInternational " style="background-color: #deb40;margin-top: 8px"  modifier="large--cta"  class="center" onclick="quizzUtils.navigate(30)"> International  </ons-button>
+
+                <br>
+                <ons-button id="btPersonalFinance" style="background-color: #deb40;margin-top: 8px"  modifier="large--cta"  class="center" onclick="quizzUtils.navigate(40)"> Personal Finance </ons-button>
+
+                <br>
+                <ons-button id="btPersonalFinance" style="background-color: #deb40;margin-top: 8px"  modifier="cta"  class="center" onclick="hideModal('modal')"> Back </ons-button>
+            </ons-modal>
+            <ons-modal id="scoreMdl">
+                <ons-icon icon="ion-navicon"></ons-icon>
+                <h1>Your Score.</h1>
+                <div id="txtScoreDash"></div>
+                <ons-button id="btBackScr" modifier="cta"  class="center" onclick="hideModal('scoreMdl')"> Continue </ons-button>
+                <ons-button modifier="large--cta" class="center" id="btRestart" onclick="quizzUtils.restartQuizz()">
+                    Restart
+                </ons-button>
+            </ons-modal>
+            <ons-modal id="modal1">
+                <ons-icon icon="ion-navicon"></ons-icon>
+                <h1>Quizz Paused.</h1>
+                <h3>Your progress has been saved!</h3>
+                <ons-button id="btContinueQuizz1" style="background-color: #deb40;margin-top: 8px"  modifier="cta"  class="center" onclick="hideModal('modal1')"> Continue </ons-button>
+            </ons-modal>
             <ons-popover direction="up" id="popover">
                 <div style="padding: 10px; text-align: center;">
                     <p id="statusMsg">
@@ -62,37 +100,33 @@
                 </div>
             </ons-popover>
             <ons-toolbar>
+                <div class="left">
+                    <ons-toolbar-button onclick="showModal('modal')">
+                        <ons-icon icon="ion-navicon" style="font-size: 32px; width: 1em;"></ons-icon>
+                    </ons-toolbar-button>
+                </div>
                 <div class="center" id="txtQuizzType">Quizz</div>
+                <div id="icoStar" class="right" style="display: none">
+                    <img  src="img/star.png" width="20"/>
+                </div>
+                <div id="icoFace" class="right" style="display: none">
+                    <img src="img/frowing.png" width="20"/>
+                </div>
 
             </ons-toolbar>
-            <ons-row>
-                <ons-col width="20%">
-                    <ons-button id="btFundamentals" style="background-color: #deb40" class=" left " onclick="void()">Fundamentals</ons-button>
-                </ons-col>
-                <ons-col width="20%">
-                    <ons-button id="btMicroeconomics" style="background-color: #deb40" onclick="void"> Microeconomics </ons-button>
-                </ons-col>
-                <ons-col width="20%">
-                    <ons-button id="btMacroeconomics" style="background-color: #deb40" onclick="void"> Macroeconomics </ons-button>
-                </ons-col>
-                <ons-col width="20%">
-                    <ons-button id="btInternational " style="background-color: #deb40" onclick="void"> International  </ons-button>
-                </ons-col>
-                <ons-col width="20%">
-                    <ons-button id="btPersonalFinance" style="background-color: #deb40" onclick="void"> Personal Finance </ons-button>
-                </ons-col>
-            </ons-row>
             <ons-list>
                 <ons-list-header>
 
-                    <center><img width="0" height="0" id="imgQItem" style="width: 98%;height: 40%;margin-top: 10px;"/></center>
-                    <div id="txtExcerpt" class="textarea--transparent"  style="width: 98%;height: 40%;margin: 1px;">
+                    <center>
+                        <img width="0" height="0" id="imgQItem" style="width: 98%;height: 40%;margin-top: 10px;"/>
+                    </center>
+                    <div id="txtTitle" class="textarea--transparent"  style="width: 98%;height: 40%;margin: 1px;">
                         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
                     </div>
                     <br>
-
-                    Choose the right answer
-
+                    <div id="txtExcerpt" >
+                        Choose the right answer
+                    </div>
                 </ons-list-header>
                 <ons-list-item tappable>
                     <label class=" left ">
@@ -145,7 +179,7 @@
             </ons-bottom-toolbar>
         </ons-page>
     </template>
-    <!-- Status Message from APP -->
+    <!-- Menu Horizontal-->
 
     <script type="text/javascript " src="cordova.js "></script>
     <script type="text/javascript" src="js/index.js"></script>

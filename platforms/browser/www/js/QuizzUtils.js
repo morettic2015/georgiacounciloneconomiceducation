@@ -21,9 +21,10 @@ var QuizzUtils = function() {
     }
 
     this.initQuizzStats = function() {
+
         var myLastAnswers = localStorage.getItem("answers");
         //only continue if has previous session
-        if (myLastAnswers === undefined) {
+        if (myLastAnswers === undefined || myLastAnswers === null) {
             document.getElementById('btContinue').style.display = "none";
         }
         //Listener for Page load
@@ -31,12 +32,13 @@ var QuizzUtils = function() {
             //alert(event);
             var page = event.target;
             if (page.matches('#quizz')) {
-                ons.notification.alert('Lets Start!');
+                //ons.notification.alert('Lets Start!');
                 quizzUtils.showQuizzUI();
-
+                showModal('modal');
                 $("#btBack").css("background-color", "#deb406");
                 $("#btNext").css("background-color", "#deb406")
-
+                //Restart only if has finished it or exit
+                document.getElementById('btRestart').style.display = "none";
             } else {//Init States
                 quizzUtils = new QuizzUtils();
                 //quizzUtils.initQuizzStats();
@@ -81,7 +83,8 @@ var QuizzUtils = function() {
                 break;
         }
         $("#txtQuizzType").text(groupQz);
-        $("#txtExcerpt").text(this.qI.excerpt);
+        $("#txtExcerpt").html(this.qI.excerpt);
+        $("#txtTitle").html(this.qI.title);
         $("#txtOpt1").text(this.qI.answers[0].opt);
         $("#txtOpt2").text(this.qI.answers[1].opt);
         $("#txtOpt3").text(this.qI.answers[2].opt);
@@ -98,6 +101,7 @@ var QuizzUtils = function() {
         $("#txtCounter").text(counterStats);
         //@todo load questions
         this.currentAnswer = null;
+
     }
     /**
      * Start Quizz
@@ -109,23 +113,23 @@ var QuizzUtils = function() {
         //Show on UI
         //setTimeout(this.showQuizzUI(), 3000);
 
-        var myLastAnswers = localStorage.getItem("answers");
-        var myLastQuestions = localStorage.getItem("questions");
-        //Has LocalStorage older question??
-        if (myLastAnswers !== undefined && myLastAnswers !== null) {
-            myLastAnswers = JSON.parse(myLastAnswers);
-            myLastQuestions = JSON.parse(myLastQuestions);
-            this.qz.lQuizzes = myLastQuestions;
-            this.qz.answers = myLastAnswers;
-            this.qI = this.qz.nextQuizz(0);
-            this.qz.currentPosition = this.qz.answers.length;
-        } else {
-            this.qz.currentPosition = 0;
-            this.qz.createQuizze(questions);
-            this.qz.fillQuizze();
-            //First one //set as undefined
-            this.qI = this.qz.nextQuizz(undefined);
-        }
+        /* var myLastAnswers = localStorage.getItem("answers");
+         var myLastQuestions = localStorage.getItem("questions");
+         //Has LocalStorage older question??
+         if (myLastAnswers !== undefined && myLastAnswers !== null) {
+         myLastAnswers = JSON.parse(myLastAnswers);
+         myLastQuestions = JSON.parse(myLastQuestions);
+         this.qz.lQuizzes = myLastQuestions;
+         this.qz.answers = myLastAnswers;
+         this.qI = this.qz.nextQuizz(0);
+         this.qz.currentPosition = this.qz.answers.length;
+         } else {*/
+        this.qz.currentPosition = 0;
+        this.qz.createQuizze(questions);
+        this.qz.fillQuizze();
+        //First one //set as undefined
+        this.qI = this.qz.nextQuizz(undefined);
+        // }
 
         //track quiz started event
         var isRetake = localStorage.getItem("completed");
@@ -134,18 +138,22 @@ var QuizzUtils = function() {
         //Open QUiz page
         document.querySelector('#myNavigator').pushPage('quizz.html', {data: "none"});
     }
+
     /**
      * @Pause Quizz
      * */
     this.pauseQuizz = function() {
 //If Confirm go to pause Screen
-        if (confirm('Are you sure?')) {
-            localStorage.setItem("answers", JSON.stringify(this.qz.answers));
-            localStorage.setItem("questions", JSON.stringify(this.qz.lQuizzes));
-            document.querySelector('#myNavigator').pushPage('home.html', {data: {title: 'HOME'}});
-            //Enable back button
-            document.getElementById('btContinue').style.display = "visible";
-        }
+        // if (confirm('Are you sure?')) {
+        localStorage.setItem("answers", JSON.stringify(this.qz.answers));
+        localStorage.setItem("questions", JSON.stringify(this.qz.lQuizzes));
+        localStorage.setItem("position", this.qz.currentPosition--);
+        //document.querySelector('#myNavigator').pushPage('home.html', {data: {title: 'HOME'}});
+        //Enable back button
+        //document.getElementById('btContinue').style.display = "visible";
+
+        showModal('modal1');
+        //  }
     }
     /**
      * @Continue Quizz
@@ -158,6 +166,7 @@ var QuizzUtils = function() {
         //get from localstorage
         var myLastAnswers = localStorage.getItem("answers");
         var myLastQuestions = localStorage.getItem("questions");
+        var myLastPosition = localStorage.getItem("position");
 
         //Parse continued questions
         myLastAnswers = JSON.parse(myLastAnswers);
@@ -166,8 +175,8 @@ var QuizzUtils = function() {
         //init local objects
         this.qz.lQuizzes = myLastQuestions;
         this.qz.answers = myLastAnswers;
-        this.qI = this.qz.nextQuizz(this.qz.answers[myLastAnswers.length - 1]);
-        this.qz.currentPosition = this.qz.answers.length - 1;
+        this.qI = this.qz.nextQuizz(this.qz.answers[myLastPosition - 1]);
+        this.qz.currentPosition = myLastPosition;
 
         //track quiz continue event
         var action = "quiz continue";
@@ -223,6 +232,18 @@ var QuizzUtils = function() {
         document.getElementById("radio-4").disabled = true;
 
     }
+    /**
+     *  @Navigate
+     * */
+    this.navigate = function(range) {
+        hideModal('modal');
+        ons.notification.alert('Lets start!');
+        this.qz.currentPosition = range + 1;
+        this.qI = this.qz.lQuizzes[this.qz.currentPosition];
+        this.showQuizzUI();
+    }
+
+
     /**
      * @Next navigation Quizz
      * */
@@ -319,6 +340,11 @@ var Quizze = function() {
 
         return this.currentPosition > 0 ? this.lQuizzes[this.currentPosition] : this.lQuizzes[0];
     }
+
+    this.navigateTo = function(range) {
+        this.currentPosition = range;
+    }
+
     this.nextQuizz = function(answ) {
         /**
          *  @if question answer not undefined and current answer is undefined update set answer.
@@ -327,17 +353,37 @@ var Quizze = function() {
         if (this.answers[this.currentPosition] === undefined && answ !== undefined)
             this.calcScore(this.currentPosition - 1, answ);
 
-        if (this.currentPosition >= this.lQuizzes.length) {//FINISH
 
+        var totalAnswers = 0;
+        var hasAllAnswers = false;
+        for (i = 0; i < this.answers.length; i++) {
+            if (this.answers[i] < 0) {
+                break;
+            }
+            totalAnswers++;
+        }
+
+        hasAllAnswers = totalAnswers >= 50 ? true : false;
+
+        if (hasAllAnswers) {//FINISH
+            //show restart option
+            document.getElementById('btRestart').style.display = "block";
+
+            $("#btRestart").on("click", function() {
+                navigator.splashscreen.show();
+                setTimeout(function() {
+                    navigator.splashscreen.hide();
+                    window.location.href = 'index.html';
+                }, 3000);
+            });
+
+            document.getElementById('btBackScr').style.display = 'none';
             //track quiz completed event
             window.ga.trackEvent('quiz completed', 'quiz completed', 'quiz completed', 1);
             //High Score
-            if (this.score >= 10) {
+            if (this.score >= 50) {
                 window.ga.trackEvent('perfect score', 'perfect score', 'perfect score', 1);
             }
-
-            //Alert Score.
-            ons.notification.alert('Your Score:' + this.score);
 
             //Save current state
             localStorage.setItem("completed", true);
@@ -346,18 +392,10 @@ var Quizze = function() {
             localStorage.removeItem("answers");
             localStorage.removeItem("questions");
 
-            // Reload original app url (ie your index.html file)
-            if (confirm("Wish to finish Quizz??")) {
-                navigator.splashscreen.show();
-                setTimeout(function() {
-                    navigator.splashscreen.hide();
-                    window.location.href = 'index.html';
-                }, 3000);
-            } else {
-                //return objeto
-
-                return this.lQuizzes[this.lQuizzes.length - 1];
-            }
+            //return objeto
+            this.currentPosition++;
+            return this.lQuizzes[this.lQuizzes.length - 1];
+            //}
         } else {//NEXT QUIZZ
             //Store Answer
             return this.lQuizzes[this.currentPosition++];
@@ -373,28 +411,102 @@ var Quizze = function() {
         var questionItem = this.lQuizzes[pos];
         this.answers[pos] = answer;
         try {
+            //todo animate
+            element = document.getElementById('divAnimation1');
+            element.style.display = 'block';
             if (questionItem.answers[parseInt(answer)].isFine) {
+                // document.
+
                 //this.score++; //
                 //@todo
-                $("#statusMsg").html("Thats it! You got it");
+                //   $("#statusMsg").html("Thats it! You got it");
             } else {
-                $("#statusMsg").html("Wrong answer!");
+                //  $("#statusMsg").html("Wrong answer!");
                 //Todo
             }
+            element.onblur = function() {
+                this.style.display = 'none';
+                $("#divAnimation1").animate({
+                    left: '0px',
+                    height: '0px',
+                    width: '0px'
+                });
+            }
+            $("#divAnimation1").animate({
+                left: '250px',
+                height: '+=150px',
+                width: '+=150px'
+            });
+            //Show Explanation
+            $("#statusMsg").html(questionItem.explanation);
             showPopover();
         } catch (e) {
             console.log(e);
         } finally {
-            this.score = 0;//Set score 0
-            var total = this.answers.length;//For each answer verify is fine or not
-            for (i = 0; i < total; i++) {
-                var pAnswer = this.answers[i];
-                if (this.lQuizzes[i].answers[pAnswer].isFine) {
-                    this.score++;
-                } else {
-                    console.log("Errrorr");
-                }
+            var limit1;
+            var limit2;
+            var str = "";
+            switch (this.currentPosition) {
+                case 10:
+                    showModal('scoreMdl');
+                    str = "Fundamentals";
+                    limit1 = 0;
+                    limit2 = 10;
+                    break;
+                case 20:
+                    showModal('scoreMdl');
+                    str = "Microeconomics";
+                    limit1 = 10;
+                    limit2 = 20;
+                    break;
+                case 30:
+                    showModal('scoreMdl');
+                    str = "Macroeconomics";
+                    limit1 = 20;
+                    limit2 = 30;
+                    break;
+                case 40:
+                    showModal('scoreMdl');
+                    str = "International";
+                    limit1 = 30;
+                    limit2 = 40;
+                    break;
+                case 50:
+                    showModal('scoreMdl');
+                    str = "Personal Finance";
+                    limit1 = 40;
+                    limit2 = 50;
+                    break;
             }
+            if (limit1 !== null) {
+
+                this.score = 0;
+                for (i = limit1; i < limit2; i++) {
+                    var pAnswer = this.answers[i];
+                    if (pAnswer === undefined || pAnswer === null)//Havent ansered it yet
+                        continue;
+                    if (this.lQuizzes[i].answers[pAnswer].isFine) {
+                        this.score++;
+                    } else {
+                        console.log("Errrorr");
+                    }
+                }
+                $("#txtScoreDash").html("<h1>" + str + "</h1><h3>Score:" + this.score + "</h3>");
+            }
+            limit1 = null;
+            limit2 = null;
+            /**this.score = 0;//Set score 0
+             var total = this.answers.length;//For each answer verify is fine or not
+             for (i = 0; i < total; i++) {
+             var pAnswer = this.answers[i];
+             if (pAnswer === undefined)//Havent ansered it yet
+             continue;
+             if (this.lQuizzes[i].answers[pAnswer].isFine) {
+             this.score++;
+             } else {
+             console.log("Errrorr");
+             }
+             }*/
         }
     }
 }
