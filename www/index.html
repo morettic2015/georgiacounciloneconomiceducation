@@ -21,6 +21,7 @@
         <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
         <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
         <script src="https://unpkg.com/jquery/dist/jquery.min.js"></script>
+        <script type = "text/javascript" src = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
         <title>Quizz</title>
     </head>
 
@@ -91,8 +92,10 @@
             </ons-modal>
             <ons-popover direction="up" id="popover">
                 <div style="padding: 10px; text-align: center;">
+                    <div id="icoAnime" class="center" style="display: none">
+                    </div>
+                    <br>
                     <p id="statusMsg">
-                        asdasdasds
                     </p>
                     <p>
                     <ons-button onclick="hidePopover()">Close</ons-button>
@@ -106,12 +109,6 @@
                     </ons-toolbar-button>
                 </div>
                 <div class="center" id="txtQuizzType">Quizz</div>
-                <div id="icoStar" class="right" style="display: none">
-                    <img  src="img/star.png" width="20"/>
-                </div>
-                <div id="icoFace" class="right" style="display: none">
-                    <img src="img/frowing.png" width="20"/>
-                </div>
 
             </ons-toolbar>
             <ons-list>

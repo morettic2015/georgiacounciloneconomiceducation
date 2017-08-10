@@ -412,31 +412,27 @@ var Quizze = function() {
         this.answers[pos] = answer;
         try {
             //todo animate
-            element = document.getElementById('divAnimation1');
-            element.style.display = 'block';
+            document.getElementById('icoAnime').style.display = 'block';
             if (questionItem.answers[parseInt(answer)].isFine) {
-                // document.
+                // document.$
+                $("#icoAnime").html('<img  src="img/star.png" width="30"/>');
+
 
                 //this.score++; //
                 //@todo
                 //   $("#statusMsg").html("Thats it! You got it");
             } else {
+                $("#icoAnime").html('<img  src="img/frowing.png" width="30"/>');
                 //  $("#statusMsg").html("Wrong answer!");
                 //Todo
             }
-            element.onblur = function() {
-                this.style.display = 'none';
-                $("#divAnimation1").animate({
-                    left: '0px',
-                    height: '0px',
-                    width: '0px'
-                });
-            }
-            $("#divAnimation1").animate({
-                left: '250px',
-                height: '+=150px',
-                width: '+=150px'
-            });
+            $("#icoAnime").effect("shake", {times: 4}, 1000);
+            //$("#icoAnime").fadeOut("slow").delay(800).fadeIn("slow").delay(800);
+            /*  $("#divAnimation1").animate({
+             left: '250px',
+             height: '+=150px',
+             width: '+=150px'
+             });*/
             //Show Explanation
             $("#statusMsg").html(questionItem.explanation);
             showPopover();
