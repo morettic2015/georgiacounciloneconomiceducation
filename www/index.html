@@ -38,12 +38,12 @@
             <section style="padding: 8px;padding-top: 80px">
                 <p>
                 <ons-button modifier="large--cta" id="btStartQuizz" onclick="quizzUtils.startQuizz(questions)">
-                    Start Test
+                    Start New Quiz
                 </ons-button>
                 </p>
                 <p>
                 <ons-button modifier="large--cta" id="btContinue" onclick="quizzUtils.continueQuizz()">
-                    Continue
+                    Resume Paused Quiz
                 </ons-button>
                 </p>
             </section>
@@ -54,41 +54,37 @@
 
         <ons-page id="quizz">
 
-            <ons-modal id="modal">
-                <ons-icon icon="ion-navicon"></ons-icon>
-                <h1>Choose a topic.</h1>
+            <ons-modal id="modal" style="background-color: #f1f1f1">
+                <ons-icon icon="ion-navicon" 1 style="color: black"></ons-icon>
+                <h1 style="color: black">Choose a topic.</h1>
                 <br>
                 <ons-button id="btFundamentals" style="background-color: #deb40;margin-top: 8px" modifier="large--cta" class="center" onclick="quizzUtils.navigate(0)">Fundamentals</ons-button>
                 <br>
-
                 <ons-button id="btMicroeconomics" style="background-color: #deb40;margin-top: 8px" modifier="large--cta" class="center" onclick="quizzUtils.navigate(10)"> Microeconomics </ons-button>
-
                 <br>
                 <ons-button id="btMacroeconomics" style="background-color: #deb40;margin-top: 8px"  modifier="large--cta"  class="center" onclick="quizzUtils.navigate(20)"> Macroeconomics </ons-button>
-
                 <br>
                 <ons-button id="btInternational " style="background-color: #deb40;margin-top: 8px"  modifier="large--cta"  class="center" onclick="quizzUtils.navigate(30)"> International  </ons-button>
-
                 <br>
                 <ons-button id="btPersonalFinance" style="background-color: #deb40;margin-top: 8px"  modifier="large--cta"  class="center" onclick="quizzUtils.navigate(40)"> Personal Finance </ons-button>
-
-                <br>
-                <ons-button id="btPersonalFinance" style="background-color: #deb40;margin-top: 8px"  modifier="cta"  class="center" onclick="hideModal('modal')"> Back </ons-button>
+                <!--  <br>
+                  <ons-button id="btPersonalFinance" style="background-color: #deb40;margin-top: 8px"  modifier="cta"  class="center" onclick="hideModal('modal')"> Back </ons-button> -->
             </ons-modal>
             <ons-modal id="scoreMdl">
                 <ons-icon icon="ion-navicon"></ons-icon>
                 <h1>Your Score.</h1>
                 <div id="txtScoreDash"></div>
-                <ons-button id="btBackScr" modifier="cta"  class="center" onclick="hideModal('scoreMdl')"> Continue </ons-button>
-                <ons-button modifier="large--cta" class="center" id="btRestart" onclick="quizzUtils.restartQuizz()">
-                    Restart
+                <ons-button id="btBackScr" modifier="cta"  class="center" onclick="quizzUtils.testPicker()"> Pick a test </ons-button>
+                <p>
+                <ons-button style="margin-top: 50px" modifier="cta" class="center" id="btRestart" onclick="quizzUtils.restartquizzMain()">
+                    Main
                 </ons-button>
+                </p>
             </ons-modal>
             <ons-modal id="modal1">
                 <ons-icon icon="ion-navicon"></ons-icon>
                 <h1>Quizz Paused.</h1>
                 <h3>Your progress has been saved!</h3>
-                <ons-button id="btContinueQuizz1" style="background-color: #deb40;margin-top: 8px"  modifier="cta"  class="center" onclick="hideModal('modal1')"> Continue </ons-button>
             </ons-modal>
             <ons-popover direction="up" id="popover">
                 <div style="padding: 10px; text-align: center;">
