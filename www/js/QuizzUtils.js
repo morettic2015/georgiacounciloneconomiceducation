@@ -61,7 +61,7 @@ var QuizzUtils = function() {
             document.getElementById('imgQItem').style.height = '120px';
         } else {
             document.getElementById('imgQItem').src = '#';
-            document.getElementById('imgQItem').style.visibility = 'none';
+            document.getElementById('imgQItem').style.visibility = 'hidden';
             document.getElementById('imgQItem').style.height = '0px';
         }
         var groupQz = null;
@@ -320,7 +320,7 @@ var QuizzUtils = function() {
             document.getElementById("radio-4").disabled = false;
         }
         //Verify from memory
-        this.currentAnswer = this.qz.answers[this.qz.currentPosition] !== undefined ? this.qz.answers[this.qz.currentPosition] : this.currentAnswer;
+        this.currentAnswer = this.qz.answers[this.qz.currentPosition - 1] !== undefined ? this.qz.answers[this.qz.currentPosition - 1] : this.currentAnswer;
         if (this.currentAnswer === null) {
             ons.notification.alert('Choose an option before proceed');
         } else {
@@ -442,7 +442,7 @@ var Quizze = function() {
             //track quiz completed event
             window.ga.trackEvent('quiz completed', 'quiz completed', 'quiz completed', 1);
             //High Score
-            if (this.score >= 50) {
+            if (this.score >= 10) {
                 window.ga.trackEvent('perfect score', 'perfect score', 'perfect score', 1);
             }
 
